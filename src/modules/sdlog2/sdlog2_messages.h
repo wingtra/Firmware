@@ -490,6 +490,33 @@ struct log_CTS_s {
 	float yaw_rate;
 };
 
+/* --- MPC Gains --- */
+#define LOG_MCP1_MSG 48
+struct log_MCP1_s {
+	float x_p;
+	float x_vel_p;
+	float x_vel_i;
+	float x_vel_d;
+	float x_vel_max;
+	float x_vel_ff;
+	float y_p;
+	float y_vel_p;
+	float y_vel_i;
+	float y_vel_d;
+	float y_vel_max;
+	float y_vel_ff;
+};
+
+#define LOG_MCP2_MSG 49
+struct log_MCP2_s {
+	float z_p;
+	float z_vel_p;
+	float z_vel_i;
+	float z_vel_d;
+	float z_vel_max;
+	float z_vel_ff;
+};
+
 /* WARNING: ID 46 is already in use for ATTC1 */
 
 /********** SYSTEM MESSAGES, ID > 0x80 **********/
@@ -564,6 +591,8 @@ static const struct log_format_s log_formats[] = {
 	LOG_FORMAT(ENCD, "qfqf",	"cnt0,vel0,cnt1,vel1"),
 	LOG_FORMAT(TSYN, "Q", 		"TimeOffset"),
 	LOG_FORMAT(MACS, "fff", "RRint,PRint,YRint"),
+	LOG_FORMAT(MCP1, "ffffffffffff", "xP,vxP,vxI,vxD,vxMax,vxFF,yP,vyP,vyI,vyD,vyMax,vyFF"),
+	LOG_FORMAT(MCP2, "ffffff", "zP,vzP,vzI,vzD,vzMax,vzFF"),
 
 	/* system-level messages, ID >= 0x80 */
 	/* FMT: don't write format of format message, it's useless */

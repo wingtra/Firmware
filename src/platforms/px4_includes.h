@@ -69,6 +69,7 @@
 #include <px4_position_setpoint_triplet.h>
 #include <px4_offboard_control_mode.h>
 #include <px4_vehicle_force_setpoint.h>
+#include <px4_mpc_parameters.h>
 #endif
 
 #elif defined(__PX4_NUTTX)
@@ -99,6 +100,7 @@
 #include <platforms/nuttx/px4_messages/px4_position_setpoint_triplet.h>
 #include <platforms/nuttx/px4_messages/px4_offboard_control_mode.h>
 #include <platforms/nuttx/px4_messages/px4_vehicle_force_setpoint.h>
+#include <platforms/nuttx/px4_messages/px4_mpc_parameters.h>
 #endif
 #include <systemlib/err.h>
 #include <systemlib/param/param.h>
@@ -131,6 +133,7 @@
 #include <platforms/posix/px4_messages/px4_vehicle_global_velocity_setpoint.h>
 #include <platforms/posix/px4_messages/px4_vehicle_local_position.h>
 #include <platforms/posix/px4_messages/px4_position_setpoint_triplet.h>
+#include <platforms/posix/px4_messages/px4_mpc_parameters.h>
 #endif
 #include <systemlib/err.h>
 #include <systemlib/param/param.h>
@@ -162,6 +165,7 @@
 #include <platforms/qurt/px4_messages/px4_vehicle_global_velocity_setpoint.h>
 #include <platforms/qurt/px4_messages/px4_vehicle_local_position.h>
 #include <platforms/qurt/px4_messages/px4_position_setpoint_triplet.h>
+#include <platforms/qurt/px4_messages/px4_mpc_parameters.h>
 #endif
 #include <systemlib/err.h>
 #include <systemlib/param/param.h>

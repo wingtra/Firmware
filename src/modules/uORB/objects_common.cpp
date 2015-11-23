@@ -266,3 +266,6 @@ ORB_DEFINE(distance_sensor, struct distance_sensor_s);
 
 #include "topics/camera_trigger.h"
 ORB_DEFINE(camera_trigger, struct camera_trigger_s);
+
+#include "topics/mpc_parameters.h"
+ORB_DEFINE(mpc_parameters, struct mpc_parameters_s);

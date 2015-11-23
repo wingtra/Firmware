@@ -109,6 +109,7 @@
 #include <uORB/topics/vtol_vehicle_status.h>
 #include <uORB/topics/time_offset.h>
 #include <uORB/topics/mc_att_ctrl_status.h>
+#include <uORB/topics/mpc_parameters.h>
 
 #include <systemlib/systemlib.h>
 #include <systemlib/param/param.h>
@@ -1092,6 +1093,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 		struct time_offset_s time_offset;
 		struct mc_att_ctrl_status_s mc_att_ctrl_status;
 		struct control_state_s ctrl_state;
+		struct mpc_parameters_s mpc_parameters;
 	} buf;
 
 	memset(&buf, 0, sizeof(buf));
@@ -1141,6 +1143,9 @@ int sdlog2_thread_main(int argc, char *argv[])
 			struct log_TSYN_s log_TSYN;
 			struct log_MACS_s log_MACS;
 			struct log_CTS_s log_CTS;
+			struct log_MCP1_s log_MCP1;
+			struct log_MCP2_s log_MCP2;
+
 		} body;
 	} log_msg = {
 		LOG_PACKET_HEADER_INIT(0)
@@ -1184,6 +1189,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 		int tsync_sub;
 		int mc_att_ctrl_status_sub;
 		int ctrl_state_sub;
+		int mpc_parameters_sub;
 	} subs;
 
 	subs.cmd_sub = -1;
@@ -1219,6 +1225,7 @@ int sdlog2_thread_main(int argc, char *argv[])
 	subs.mc_att_ctrl_status_sub = -1;
 	subs.ctrl_state_sub = -1;
 	subs.encoders_sub = -1;
+	subs.mpc_parameters_sub = -1;
 
 	/* add new topics HERE */
 
@@ -1874,6 +1881,34 @@ int sdlog2_thread_main(int argc, char *argv[])
 			log_msg.body.log_CTS.pitch_rate = buf.ctrl_state.pitch_rate;
 			log_msg.body.log_CTS.yaw_rate = buf.ctrl_state.yaw_rate;
 			LOGBUFFER_WRITE_AND_COUNT(CTS);
+		}
+
+		/* --- MPC GAINS --- */
+		if (copy_if_updated(ORB_ID(mpc_parameters), &subs.mpc_parameters_sub, &buf.mpc_parameters)) {
+			log_msg.msg_type = LOG_MCP1_MSG;
+			log_msg.body.log_MCP1.x_p = buf.mpc_parameters.MPC_X_P;
+			log_msg.body.log_MCP1.x_vel_p = buf.mpc_parameters.MPC_X_VEL_P;
+			log_msg.body.log_MCP1.x_vel_i = buf.mpc_parameters.MPC_X_VEL_I;
+			log_msg.body.log_MCP1.x_vel_d = buf.mpc_parameters.MPC_X_VEL_D;
+			log_msg.body.log_MCP1.x_vel_max = buf.mpc_parameters.MPC_X_VEL_MAX;
+			log_msg.body.log_MCP1.x_vel_ff = buf.mpc_parameters.MPC_X_FF;
+			log_msg.body.log_MCP1.y_p = buf.mpc_parameters.MPC_Y_P;
+			log_msg.body.log_MCP1.y_vel_p = buf.mpc_parameters.MPC_Y_VEL_P;
+			log_msg.body.log_MCP1.y_vel_i = buf.mpc_parameters.MPC_Y_VEL_I;
+			log_msg.body.log_MCP1.y_vel_d = buf.mpc_parameters.MPC_Y_VEL_D;
+			log_msg.body.log_MCP1.y_vel_max = buf.mpc_parameters.MPC_Y_VEL_MAX;
+			log_msg.body.log_MCP1.y_vel_ff = buf.mpc_parameters.MPC_Y_FF;
+			LOGBUFFER_WRITE_AND_COUNT(MCP1);
+
+			log_msg.msg_type = LOG_MCP2_MSG;
+			log_msg.body.log_MCP2.z_p = buf.mpc_parameters.MPC_Z_P;
+			log_msg.body.log_MCP2.z_vel_p = buf.mpc_parameters.MPC_Z_VEL_P;
+			log_msg.body.log_MCP2.z_vel_i = buf.mpc_parameters.MPC_Z_VEL_I;
+			log_msg.body.log_MCP2.z_vel_d = buf.mpc_parameters.MPC_Z_VEL_D;
+			log_msg.body.log_MCP2.z_vel_max = buf.mpc_parameters.MPC_Z_VEL_MAX;
+			log_msg.body.log_MCP2.z_vel_ff = buf.mpc_parameters.MPC_Z_FF;
+			LOGBUFFER_WRITE_AND_COUNT(MCP2);
+
 		}
 
 		/* signal the other thread new data, but not yet unlock */

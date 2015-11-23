@@ -148,58 +148,135 @@ PARAM_DEFINE_FLOAT(MPC_Z_FF, 0.5f);
 /**
  * Proportional gain for horizontal position error
  *
- * @min 0.0
- * @group Multicopter Position Control
- */
-PARAM_DEFINE_FLOAT(MPC_XY_P, 1.0f);
-
-/**
- * Proportional gain for horizontal velocity error
+ * Body X Axis
  *
  * @min 0.0
  * @group Multicopter Position Control
  */
-PARAM_DEFINE_FLOAT(MPC_XY_VEL_P, 0.1f);
+PARAM_DEFINE_FLOAT(MPC_X_P, 1.0f);
+
+/**
+ * Proportional gain for horizontal velocity error
+ *
+ * Body X Axis
+ *
+ * @min 0.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_X_VEL_P, 0.1f);
 
 /**
  * Integral gain for horizontal velocity error
+ *
+ * Body X Axis
  *
  * Non-zero value allows to resist wind.
  *
  * @min 0.0
  * @group Multicopter Position Control
  */
-PARAM_DEFINE_FLOAT(MPC_XY_VEL_I, 0.02f);
+PARAM_DEFINE_FLOAT(MPC_X_VEL_I, 0.02f);
 
 /**
  * Differential gain for horizontal velocity error. Small values help reduce fast oscillations. If value is too big oscillations will appear again.
  *
+ * Body X Axis
+ *
  * @min 0.0
  * @group Multicopter Position Control
  */
-PARAM_DEFINE_FLOAT(MPC_XY_VEL_D, 0.01f);
+PARAM_DEFINE_FLOAT(MPC_X_VEL_D, 0.01f);
 
 /**
  * Maximum horizontal velocity
- *
+ * 
+ * Body X Axis
  * Maximum horizontal velocity in AUTO mode and endpoint for position stabilized mode (POSCTRL).
  *
  * @unit m/s
  * @min 0.0
  * @group Multicopter Position Control
  */
-PARAM_DEFINE_FLOAT(MPC_XY_VEL_MAX, 5.0f);
+PARAM_DEFINE_FLOAT(MPC_X_VEL_MAX, 5.0f);
 
 /**
  * Horizontal velocity feed forward
  *
+ * Body X Axis
  * Feed forward weight for position control in position control mode (POSCTRL). 0 will give slow responce and no overshot, 1 - fast responce and big overshot.
  *
  * @min 0.0
  * @max 1.0
  * @group Multicopter Position Control
  */
-PARAM_DEFINE_FLOAT(MPC_XY_FF, 0.5f);
+PARAM_DEFINE_FLOAT(MPC_X_FF, 0.5f);
+
+/**
+ * Proportional gain for horizontal position error
+ *
+ * Body Y Axis
+ *
+ * @min 0.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_Y_P, 1.0f);
+
+/**
+ * Proportional gain for horizontal velocity error
+ *
+ * Body Y Axis
+ *
+ * @min 0.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_Y_VEL_P, 0.1f);
+
+/**
+ * Integral gain for horizontal velocity error
+ *
+ * Body Y Axis
+ *
+ * Non-zero value allows to resist wind.
+ *
+ * @min 0.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_Y_VEL_I, 0.02f);
+
+/**
+ * Differential gain for horizontal velocity error. Small values help reduce fast oscillations. If value is too big oscillations will appear again.
+ *
+ * Body Y Axis
+ *
+ * @min 0.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_Y_VEL_D, 0.01f);
+
+/**
+ * Maximum horizontal velocity
+ *
+ * Body Y Axis
+ * Maximum horizontal velocity in AUTO mode and endpoint for position stabilized mode (POSCTRL).
+ *
+ * @unit m/s
+ * @min 0.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_Y_VEL_MAX, 5.0f);
+
+/**
+ * Horizontal velocity feed forward
+ *
+ * Body Y Axis
+ * Feed forward weight for position control in position control mode (POSCTRL). 0 will give slow responce and no overshot, 1 - fast responce and big overshot.
+ *
+ * @min 0.0
+ * @max 1.0
+ * @group Multicopter Position Control
+ */
+PARAM_DEFINE_FLOAT(MPC_Y_FF, 0.5f);
+
 
 /**
  * Maximum tilt angle in air
