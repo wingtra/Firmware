@@ -31,14 +31,11 @@
 #
 ############################################################################
 px4_add_module(
-	MODULE drivers__camera_trigger
-	MAIN camera_trigger
-	STACK 1200
+	MODULE lib__terrain_estimation
 	COMPILE_FLAGS
 		-Os
 	SRCS
-		camera_trigger.cpp
-		camera_trigger_params.c
+		terrain_estimator.cpp
 	DEPENDS
 		platforms__common
 	)

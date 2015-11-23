@@ -31,14 +31,12 @@
 #
 ############################################################################
 px4_add_module(
-	MODULE drivers__camera_trigger
-	MAIN camera_trigger
-	STACK 1200
+	MODULE lib__runway_takeoff
 	COMPILE_FLAGS
 		-Os
 	SRCS
-		camera_trigger.cpp
-		camera_trigger_params.c
+		RunwayTakeoff.cpp
+		runway_takeoff_params.c
 	DEPENDS
 		platforms__common
 	)
