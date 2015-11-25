@@ -478,7 +478,7 @@ void AttitudeEstimatorQ::task_main()
 			// Rrw * Vw = vn. This way we have consistency
 			_mocap_hdg = Rmoc.transposed() * v;
 		}
-		
+
 		// Update airspeed
 		bool airspeed_updated = false;
 		orb_check(_airspeed_sub, &airspeed_updated);
