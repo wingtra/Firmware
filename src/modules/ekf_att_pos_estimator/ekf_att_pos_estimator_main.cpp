@@ -1837,4 +1837,6 @@ int ekf_att_pos_estimator_main(int argc, char *argv[])
 
 	PX4_ERR("unrecognized command");
 	return 1;
+
+//TESTING WINGTRA
 }
