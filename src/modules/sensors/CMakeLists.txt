@@ -37,7 +37,6 @@ if (${OS} STREQUAL "qurt")
 	else()
 	list(APPEND SENSORS_SRCS
 		sensors_init.cpp)
-
 endif()
 
 px4_add_module(

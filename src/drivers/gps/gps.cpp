@@ -228,8 +228,6 @@ GPS::~GPS()
 int
 GPS::init()
 {
-	warnx("HELLO %i", _gps_num);
-
 	/* start the GPS driver worker task */
 	_task = px4_task_spawn_cmd("gps", SCHED_DEFAULT,
 				   SCHED_PRIORITY_SLOW_DRIVER, 1200, (px4_main_t)&GPS::task_main_trampoline, nullptr);

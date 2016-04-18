@@ -103,6 +103,7 @@
 #include <uORB/topics/airspeed.h>
 #include <uORB/topics/rc_parameter_map.h>
 #include <uORB/topics/vehicle_gps_position.h>
+#include <uORB/topics/vtol_vehicle_status.h>
 
 #include <DevMgr.hpp>
 
@@ -231,7 +232,7 @@ private:
 	int		_rc_parameter_map_sub;		/**< rc parameter map subscription */
 	int 		_manual_control_sub;		/**< notification of manual control updates */
 	int 	_gps_sub[2]; 					/**< gps subscription */
-	int 	_vtol_status_sub; 					/**< gps subscription */
+	int 	_vtol_status_sub; 					/**< vtol status subscription */
 
 	orb_advert_t	_sensor_pub;			/**< combined sensor data topic */
 	orb_advert_t	_manual_control_pub;		/**< manual control signal topic */
@@ -2228,7 +2229,6 @@ Sensors::task_main()
 
 	_battery.reset(&_battery_status);
 
-
 	/* get a set of initial values */
 	accel_poll(raw);
 	gyro_poll(raw);
@@ -2242,7 +2242,6 @@ Sensors::task_main()
 
 	/* advertise the sensor_combined topic and make the initial publication */
 	_sensor_pub = orb_advertise(ORB_ID(sensor_combined), &raw);
-
 
 	/* wakeup source(s) */
 	px4_pollfd_struct_t fds[1] = {};

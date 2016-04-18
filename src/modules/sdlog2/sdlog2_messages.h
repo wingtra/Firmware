@@ -585,6 +585,7 @@ struct log_CAMT_s {
 #define LOG_LAND_MSG 57
 struct log_LAND_s {
 	uint8_t landed;
+};
 
 /* --- GPS - GPS 1 POSITION --- */
 #define LOG_GPS1_MSG 58
