@@ -37,6 +37,7 @@ if (${OS} STREQUAL "qurt")
 	else()
 	list(APPEND SENSORS_SRCS
 		sensors_init.cpp)
+
 endif()
 
 px4_add_module(
@@ -47,6 +48,7 @@ px4_add_module(
 	COMPILE_FLAGS
 		-Wno-type-limits
 		-O3
+		-Wframe-larger-than=1500
 	SRCS
 		${SENSORS_SRCS}
 	DEPENDS
