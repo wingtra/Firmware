@@ -2994,11 +2994,11 @@ PARAM_DEFINE_INT32(PWM_AUX_DISARMED, 1000);
 /**
  * Use dual GPS
  *
- *
+ * Enables the use of a second GPS unit.
  *
  * @min 0
  * @max 1
  *
- * @group Additional Hacks
+ * @group Miscellaneous
  */
-PARAM_DEFINE_INT32(PAC_USE_DUAL_GPS, 0);
+PARAM_DEFINE_INT32(USE_DUAL_GPS, 0);
