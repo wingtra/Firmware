@@ -231,7 +231,7 @@ private:
 	int 		_params_sub;			/**< notification of parameter updates */
 	int		_rc_parameter_map_sub;		/**< rc parameter map subscription */
 	int 		_manual_control_sub;		/**< notification of manual control updates */
-	int 	_gps_sub[2]; 					/**< gps subscription */
+	int 		_gps_sub[2]; 				/**< gps subscription */
 	int 	_vtol_status_sub; 					/**< vtol status subscription */
 
 	orb_advert_t	_sensor_pub;			/**< combined sensor data topic */
@@ -241,7 +241,7 @@ private:
 	orb_advert_t	_battery_pub;			/**< battery status */
 	orb_advert_t	_airspeed_pub;			/**< airspeed */
 	orb_advert_t	_diff_pres_pub;			/**< differential_pressure */
-	orb_advert_t 	_gps_pub;				/**< gps topic */
+	orb_advert_t 	_gps_pub;			/**< gps topic */
 
 	perf_counter_t	_loop_perf;			/**< loop performance counter */
 
@@ -329,7 +329,7 @@ private:
 
 		float baro_qnh;
 
-		int pac_use_dual_gps;
+		int use_dual_gps;
 	}		_parameters;			/**< local copies of interesting parameters */
 
 	struct {
@@ -394,7 +394,7 @@ private:
 
 		param_t baro_qnh;
 
-		param_t pac_use_dual_gps;
+		param_t use_dual_gps;
 	}		_parameter_handles;		/**< handles for interesting parameters */
 
 
@@ -412,7 +412,7 @@ private:
 	int		adc_init();
 
 	/**
-	 * Do gps -related initialization.
+	 * Do gps-related initialization.
 	 */
 	int		gps_init(struct vehicle_gps_position_s gps);
 
@@ -504,7 +504,7 @@ private:
 	/**
 	 * Poll the gps data for updated data.
 	 *
-	 * @param gps			battery monitor sensor data structure into which
+	 * @param gps			gps sensor data structure into which
 	 *				data should be returned.
 	 */
 	void		gps_poll(struct vehicle_gps_position_s vehicle_gps[2]);
@@ -687,7 +687,7 @@ Sensors::Sensors() :
 	_parameter_handles.baro_qnh = param_find("SENS_BARO_QNH");
 
 	/* Dual GPS */
-	_parameter_handles.pac_use_dual_gps = param_find("PAC_USE_DUAL_GPS");
+	_parameter_handles.use_dual_gps = param_find("USE_DUAL_GPS");
 
 	// These are parameters for which QGroundControl always expects to be returned in a list request.
 	// We do a param_find here to force them into the list.
@@ -975,7 +975,7 @@ Sensors::parameters_update()
 	_board_rotation = board_rotation_offset * _board_rotation;
 
 	// Dual GPS
-	param_get(_parameter_handles.pac_use_dual_gps, &(_parameters.pac_use_dual_gps));
+	param_get(_parameter_handles.use_dual_gps, &(_parameters.use_dual_gps));
 
 	/* update barometer qnh setting */
 	param_get(_parameter_handles.baro_qnh, &(_parameters.baro_qnh));
@@ -1025,7 +1025,7 @@ Sensors::gps_init(struct vehicle_gps_position_s gps)
 
 	_gps_sub[0] = orb_subscribe(ORB_ID(vehicle_gps_1_position));
 
-	if (_parameters.pac_use_dual_gps == 1) {
+	if (_parameters.use_dual_gps == 1) {
 		_gps_sub[1] = orb_subscribe(ORB_ID(vehicle_gps_2_position));
 	}
 
@@ -1770,8 +1770,6 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 void
 Sensors::gps_poll(struct vehicle_gps_position_s gps[2])
 {
-
-
 	bool updated;
 	orb_check(_vtol_status_sub, &updated);
 
@@ -1787,7 +1785,7 @@ Sensors::gps_poll(struct vehicle_gps_position_s gps[2])
 		orb_copy(ORB_ID(vehicle_gps_1_position), _gps_sub[0], &gps[0]);
 	}
 
-	if (_parameters.pac_use_dual_gps == 1) {
+	if (_parameters.use_dual_gps == 1) {
 		if (_gps_sub[1] == 0) {
 			_gps_sub[1] = orb_subscribe(ORB_ID(vehicle_gps_2_position));
 		}
@@ -1799,7 +1797,7 @@ Sensors::gps_poll(struct vehicle_gps_position_s gps[2])
 		}
 	}
 
-	if (_parameters.pac_use_dual_gps == 0 || !_vtol_status.vtol_in_rw_mode) {
+	if (_parameters.use_dual_gps == 0 || !_vtol_status.vtol_in_rw_mode) {
 		if (updated_gps_1) {
 			orb_publish(ORB_ID(vehicle_gps_position), _gps_pub, &gps[0]);
 		}

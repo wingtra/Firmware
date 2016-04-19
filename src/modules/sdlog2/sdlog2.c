@@ -2178,7 +2178,6 @@ int sdlog2_thread_main(int argc, char *argv[])
 
 		/* --- GPS 1 POSITION - UNIT #1 --- */
 		if (copy_if_updated(ORB_ID(vehicle_gps_1_position), &subs.gps_1_pos_sub, &buf.gps_1_pos)) {
-
 			log_msg.msg_type = LOG_GPS1_MSG;
 			log_msg.body.log_GPS1.gps_time = buf.gps_1_pos.time_utc_usec;
 			log_msg.body.log_GPS1.fix_type = buf.gps_1_pos.fix_type;
@@ -2197,11 +2196,9 @@ int sdlog2_thread_main(int argc, char *argv[])
 			log_msg.body.log_GPS1.jamming_indicator = buf.gps_1_pos.jamming_indicator;
 			LOGBUFFER_WRITE_AND_COUNT(GPS);
 		}
-
 		
-		/* --- GPS 2 POSITION - UNIT #1 --- */
+		/* --- GPS 2 POSITION - UNIT #2 --- */
 		if (copy_if_updated(ORB_ID(vehicle_gps_2_position), &subs.gps_2_pos_sub, &buf.gps_2_pos)) {
-
 			log_msg.msg_type = LOG_GPS2_MSG;
 			log_msg.body.log_GPS2.gps_time = buf.gps_2_pos.time_utc_usec;
 			log_msg.body.log_GPS2.fix_type = buf.gps_2_pos.fix_type;

@@ -590,7 +590,7 @@ struct log_LAND_s {
 /* --- GPS - GPS 1 POSITION --- */
 #define LOG_GPS1_MSG 58
 
-/* --- GPS - GPS 22 POSITION --- */
+/* --- GPS - GPS 2 POSITION --- */
 #define LOG_GPS2_MSG 59
 
 /********** SYSTEM MESSAGES, ID > 0x80 **********/

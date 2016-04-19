@@ -118,7 +118,7 @@ private:
 	orb_advert_t			_report_sat_info_pub;				///< uORB pub for satellite info
 	float				_rate;						///< position update rate
 	bool				_fake_gps;					///< fake gps output
-	int 				_gps_num;
+	int 				_gps_num;					///< number of GPS connected
 
 
 	/**
@@ -150,7 +150,7 @@ private:
 	/**
 	 * Publish the gps struct
 	 */
-	void 			publish();
+	void 				publish();
 
 };
 
@@ -542,7 +542,7 @@ namespace gps
 {
 
 GPS	*g_dev = nullptr;
-GPS *g_dev2 = nullptr;
+GPS	*g_dev2 = nullptr;
 
 void	start(const char *uart_path, bool fake_gps, bool enable_sat_info, int gps_num);
 void	stop();
@@ -558,7 +558,7 @@ start(const char *uart_path, bool fake_gps, bool enable_sat_info, int gps_num)
 {
 	if (gps_num == 1) {
 		if (g_dev != nullptr) {
-			errx(1, "already started");
+			errx(1, "GPS 1 already started");
 		}
 
 		/* create the driver */
@@ -577,7 +577,7 @@ start(const char *uart_path, bool fake_gps, bool enable_sat_info, int gps_num)
 	} else {
 		if (gps_num == 2) {
 			if (g_dev2 != nullptr) {
-				errx(1, "already started");
+				errx(1, "GPS 2 already started");
 			}
 
 			/* create the driver */
@@ -603,7 +603,7 @@ fail1:
 		g_dev = nullptr;
 	}
 
-	PX4_ERR("start failed");
+	PX4_ERR("start of GPS 1 failed");
 	return;
 
 fail2:
@@ -613,7 +613,7 @@ fail2:
 		g_dev2 = nullptr;
 	}
 
-	PX4_ERR("start failed");
+	PX4_ERR("start of GPS 2 failed");
 	return;
 }
 
@@ -626,7 +626,9 @@ stop()
 	delete g_dev;
 	g_dev = nullptr;
 
-	delete g_dev2;
+	if (g_dev2 != nullptr) {
+		delete g_dev2;
+	}
 	g_dev2 = nullptr;
 
 	px4_task_exit(0);
@@ -721,12 +723,13 @@ gps_main(int argc, char *argv[])
 				if (argc > i + 1) {
 					device_name2 = argv[i + 1];
 
-				} else { PX4_ERR("Did not get second device address"); }
+				} else {
+					PX4_ERR("Did not get second device address");
+				}
 			}
 		}
 
 		gps::start(device_name, fake_gps, enable_sat_info, 1);
-
 
 		if (!(device_name2 == nullptr)) {
 			gps::start(device_name2, fake_gps, enable_sat_info, 2);
