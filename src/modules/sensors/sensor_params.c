@@ -2990,3 +2990,15 @@ PARAM_DEFINE_INT32(PWM_AUX_MAX, 2000);
  * @group PWM Outputs
  */
 PARAM_DEFINE_INT32(PWM_AUX_DISARMED, 1000);
+
+/**
+ * Use dual GPS
+ *
+ * Enables the use of a second GPS unit.
+ *
+ * @min 0
+ * @max 1
+ *
+ * @group Miscellaneous
+ */
+PARAM_DEFINE_INT32(USE_DUAL_GPS, 0);

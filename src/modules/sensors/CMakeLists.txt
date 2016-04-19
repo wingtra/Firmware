@@ -47,6 +47,7 @@ px4_add_module(
 	COMPILE_FLAGS
 		-Wno-type-limits
 		-O3
+		-Wframe-larger-than=1500
 	SRCS
 		${SENSORS_SRCS}
 	DEPENDS

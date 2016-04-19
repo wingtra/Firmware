@@ -587,6 +587,12 @@ struct log_LAND_s {
 	uint8_t landed;
 };
 
+/* --- GPS - GPS 1 POSITION --- */
+#define LOG_GPS1_MSG 58
+
+/* --- GPS - GPS 2 POSITION --- */
+#define LOG_GPS2_MSG 59
+
 /********** SYSTEM MESSAGES, ID > 0x80 **********/
 
 /* --- TIME - TIME STAMP --- */
@@ -672,6 +678,9 @@ static const struct log_format_s log_formats[] = {
 	LOG_FORMAT(RPL3, "QffffIB", "Tflow,fx,fy,gx,gy,delT,qual"),
 	LOG_FORMAT(RPL4, "Qf", "Trng,rng"),
 	LOG_FORMAT(LAND, "B", "Landed"),
+	LOG_FORMAT_S(GPS1, GPS,	 "QBffLLfffffBHHH",	"GPSTime,Fix,EPH,EPV,Lat,Lon,Alt,VelN,VelE,VelD,Cog,nSat,SNR,N,J"),
+	LOG_FORMAT_S(GPS2, GPS, "QBffLLfffffBHHH",	"GPSTime,Fix,EPH,EPV,Lat,Lon,Alt,VelN,VelE,VelD,Cog,nSat,SNR,N,J"),
+	
 	/* system-level messages, ID >= 0x80 */
 	/* FMT: don't write format of format message, it's useless */
 	LOG_FORMAT(TIME, "Q", "StartTime"),

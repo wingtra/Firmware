@@ -294,3 +294,7 @@ ORB_DEFINE(commander_state, struct commander_state_s);
 
 #include "topics/transponder_report.h"
 ORB_DEFINE(transponder_report, struct transponder_report_s);
+
+#include <drivers/drv_gps.h>
+ORB_DEFINE(vehicle_gps_1_position, struct vehicle_gps_position_s);
+ORB_DEFINE(vehicle_gps_2_position, struct vehicle_gps_position_s);
