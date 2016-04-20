@@ -78,7 +78,6 @@
 #include <drivers/drv_adc.h>
 #include <drivers/drv_airspeed.h>
 #include <drivers/drv_px4flow.h>
-#include <drivers/drv_gps.h>
 
 #include <systemlib/systemlib.h>
 #include <systemlib/param/param.h>
@@ -102,8 +101,6 @@
 #include <uORB/topics/differential_pressure.h>
 #include <uORB/topics/airspeed.h>
 #include <uORB/topics/rc_parameter_map.h>
-#include <uORB/topics/vehicle_gps_position.h>
-#include <uORB/topics/vtol_vehicle_status.h>
 
 #include <DevMgr.hpp>
 
@@ -231,8 +228,6 @@ private:
 	int 		_params_sub;			/**< notification of parameter updates */
 	int		_rc_parameter_map_sub;		/**< rc parameter map subscription */
 	int 		_manual_control_sub;		/**< notification of manual control updates */
-	int 		_gps_sub[2]; 			/**< gps subscription */
-	int 	    _vtol_status_sub; 			/**< vtol status subscription */
 
 	orb_advert_t	_sensor_pub;			/**< combined sensor data topic */
 	orb_advert_t	_manual_control_pub;		/**< manual control signal topic */
@@ -241,7 +236,6 @@ private:
 	orb_advert_t	_battery_pub;			/**< battery status */
 	orb_advert_t	_airspeed_pub;			/**< airspeed */
 	orb_advert_t	_diff_pres_pub;			/**< differential_pressure */
-	orb_advert_t 	_gps_pub;			/**< gps topic */
 
 	perf_counter_t	_loop_perf;			/**< loop performance counter */
 
@@ -253,7 +247,6 @@ private:
 	struct differential_pressure_s _diff_pres;
 	struct airspeed_s _airspeed;
 	struct rc_parameter_map_s _rc_parameter_map;
-	struct vtol_vehicle_status_s _vtol_status;
 	float _param_rc_values[rc_parameter_map_s::RC_PARAM_MAP_NCHAN];	/**< parameter values for RC control */
 
 	math::Matrix<3, 3>	_board_rotation;	/**< rotation matrix for the orientation that the board is mounted */
@@ -329,7 +322,6 @@ private:
 
 		float baro_qnh;
 
-		int use_dual_gps;
 	}		_parameters;			/**< local copies of interesting parameters */
 
 	struct {
@@ -394,7 +386,6 @@ private:
 
 		param_t baro_qnh;
 
-		param_t use_dual_gps;
 	}		_parameter_handles;		/**< handles for interesting parameters */
 
 
@@ -410,11 +401,6 @@ private:
 	 * Do adc-related initialisation.
 	 */
 	int		adc_init();
-
-	/**
-	 * Do gps-related initialization.
-	 */
-	int		gps_init(struct vehicle_gps_position_s gps);
 
 	/**
 	 * Poll the accelerometer for updated data.
@@ -502,14 +488,6 @@ private:
 	void 		rc_parameter_map_poll(bool forced = false);
 
 	/**
-	 * Poll the gps data for updated data.
-	 *
-	 * @param gps			gps sensor data structure into which
-	 *				data should be returned.
-	 */
-	void		gps_poll(struct vehicle_gps_position_s vehicle_gps[2]);
-
-	/**
 	 * Poll the ADC and update readings to suit.
 	 *
 	 * @param raw			Combined sensor data structure into which
@@ -558,8 +536,6 @@ Sensors::Sensors() :
 	_params_sub(-1),
 	_rc_parameter_map_sub(-1),
 	_manual_control_sub(-1),
-	_gps_sub{ -1, -1},
-	_vtol_status_sub{ -1},
 
 	/* publications */
 	_sensor_pub(nullptr),
@@ -569,7 +545,6 @@ Sensors::Sensors() :
 	_battery_pub(nullptr),
 	_airspeed_pub(nullptr),
 	_diff_pres_pub(nullptr),
-	_gps_pub(nullptr),
 
 	/* performance counters */
 	_loop_perf(perf_alloc(PC_ELAPSED, "sensor task update")),
@@ -685,9 +660,6 @@ Sensors::Sensors() :
 
 	/* Barometer QNH */
 	_parameter_handles.baro_qnh = param_find("SENS_BARO_QNH");
-
-	/* Dual GPS */
-	_parameter_handles.use_dual_gps = param_find("USE_DUAL_GPS");
 
 	// These are parameters for which QGroundControl always expects to be returned in a list request.
 	// We do a param_find here to force them into the list.
@@ -974,9 +946,6 @@ Sensors::parameters_update()
 
 	_board_rotation = board_rotation_offset * _board_rotation;
 
-	// Dual GPS
-	param_get(_parameter_handles.use_dual_gps, &(_parameters.use_dual_gps));
-
 	/* update barometer qnh setting */
 	param_get(_parameter_handles.baro_qnh, &(_parameters.baro_qnh));
 	DevHandle h_baro;
@@ -1014,23 +983,6 @@ Sensors::adc_init()
 		warnx("FATAL: no ADC found: %s (%d)", ADC0_DEVICE_PATH, _h_adc.getError());
 		return ERROR;
 	}
-
-	return OK;
-}
-
-int
-Sensors::gps_init(struct vehicle_gps_position_s gps)
-{
-	_vtol_status_sub = orb_subscribe(ORB_ID(vtol_vehicle_status));
-
-	_gps_sub[0] = orb_subscribe(ORB_ID(vehicle_gps_1_position));
-
-	if (_parameters.use_dual_gps == 1) {
-		_gps_sub[1] = orb_subscribe(ORB_ID(vehicle_gps_2_position));
-	}
-
-	// Advertise gps topic
-	_gps_pub = orb_advertise(ORB_ID(vehicle_gps_position), &gps);
 
 	return OK;
 }
@@ -1762,51 +1714,9 @@ Sensors::adc_poll(struct sensor_combined_s &raw)
 			}
 
 			_last_adc = t;
+
 		}
 	}
-}
-
-void
-Sensors::gps_poll(struct vehicle_gps_position_s gps[2])
-{
-	bool updated;
-	orb_check(_vtol_status_sub, &updated);
-
-	if (updated) {
-		orb_copy(ORB_ID(vtol_vehicle_status), _vtol_status_sub, &_vtol_status);
-	}
-
-	bool updated_gps_1;
-	bool updated_gps_2 = false;
-	orb_check(_gps_sub[0], &updated_gps_1);
-
-	if (updated_gps_1) {
-		orb_copy(ORB_ID(vehicle_gps_1_position), _gps_sub[0], &gps[0]);
-	}
-
-	if (_parameters.use_dual_gps == 1) {
-		if (_gps_sub[1] == 0) {
-			_gps_sub[1] = orb_subscribe(ORB_ID(vehicle_gps_2_position));
-		}
-
-		orb_check(_gps_sub[1], &updated_gps_2);
-
-		if (updated_gps_2) {
-			orb_copy(ORB_ID(vehicle_gps_2_position), _gps_sub[1], &gps[1]);
-		}
-	}
-
-	if (_parameters.use_dual_gps == 0 || !_vtol_status.vtol_in_rw_mode) {
-		if (updated_gps_1) {
-			orb_publish(ORB_ID(vehicle_gps_position), _gps_pub, &gps[0]);
-		}
-
-	} else {
-		if (updated_gps_2) {
-			orb_publish(ORB_ID(vehicle_gps_position), _gps_pub, &gps[1]);
-		}
-	}
-
 }
 
 float
@@ -2039,8 +1949,8 @@ Sensors::rc_poll()
 				const float slot_width_half = 2.0f / num_slots / 2.0f;
 
 				/* min is -1, max is +1, range is 2. We offset below min and max */
-				const float slot_min = -1.0f - slot_width_half;
-				const float slot_max = 1.0f + slot_width_half;
+				const float slot_min = -1.0f - 0.05f;
+				const float slot_max = 1.0f + 0.05f;
 
 				/* the slot gets mapped by first normalizing into a 0..1 interval using min
 				 * and max. Then the right slot is obtained by multiplying with the number of
@@ -2049,6 +1959,10 @@ Sensors::rc_poll()
 				 */
 				manual.mode_slot = (((((_rc.channels[_parameters.rc_map_flightmode - 1] - slot_min) * num_slots) + slot_width_half) /
 						     (slot_max - slot_min)) + (1.0f / num_slots));
+
+				if (manual.mode_slot >= num_slots) {
+					manual.mode_slot = num_slots - 1;
+				}
 			}
 
 			/* mode switches */
@@ -2168,13 +2082,6 @@ Sensors::task_main()
 	static_assert((sizeof(raw.gyro_timestamp) / sizeof(raw.gyro_timestamp[0])) >= SENSOR_COUNT_MAX,
 		      "SENSOR_COUNT_MAX larger than sensor_combined datastructure fields. Overflow would occur");
 
-	/* Initialise GPS */
-	struct vehicle_gps_position_s gps[2];
-
-	memset(&gps, 0, sizeof(gps));
-
-	gps_init(gps[0]);
-
 	/*
 	 * do subscriptions
 	 */
@@ -2232,7 +2139,6 @@ Sensors::task_main()
 	mag_poll(raw);
 	baro_poll(raw);
 	diff_pres_poll(raw);
-	gps_poll(gps);
 
 	parameter_update_poll(true /* forced */);
 	rc_parameter_map_poll(true /* forced */);
@@ -2285,7 +2191,6 @@ Sensors::task_main()
 		accel_poll(raw);
 		mag_poll(raw);
 		baro_poll(raw);
-		gps_poll(gps);
 
 		// FIXME TODO: this needs more thinking, otherwise we spam the console and keep switching.
 		/* Work out if main gyro timed out and fail over to alternate gyro.
