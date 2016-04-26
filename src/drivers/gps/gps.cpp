@@ -516,13 +516,7 @@ GPS::print_info()
 void
 GPS::publish()
 {
-		if (_report_gps_pos_pub != nullptr) {
-			orb_publish(ORB_ID(vehicle_gps_position), _report_gps_pos_pub, &_report_gps_pos);
-
-		} else {
-			_report_gps_pos_pub = orb_advertise_multi(ORB_ID(vehicle_gps_position), &_report_gps_pos, &_gps_orb_instance, ORB_PRIO_DEFAULT);
-			orb_publish(ORB_ID(vehicle_gps_position), _report_gps_pos_pub, &_report_gps_pos);
-		}
+			orb_publish_auto(ORB_ID(vehicle_gps_position), &_report_gps_pos_pub, &_report_gps_pos, &_gps_orb_instance, ORB_PRIO_DEFAULT);
 }
 
 /**
