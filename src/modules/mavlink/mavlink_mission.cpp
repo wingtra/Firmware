@@ -807,6 +807,7 @@ MavlinkMissionManager::parse_mavlink_mission_item(const mavlink_mission_item_t *
 		break;
 
 	default:
+		warnx("yes Sir");
 		mission_item->acceptance_radius = mavlink_mission_item->param2;
 		mission_item->time_inside = mavlink_mission_item->param1;
 		break;
