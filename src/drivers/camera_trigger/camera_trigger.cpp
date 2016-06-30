@@ -390,9 +390,20 @@ CameraTrigger::cycle_trampoline(void *arg)
 
 				if (cmd.command == vehicle_command_s::VEHICLE_CMD_DO_SET_CAM_TRIGG_DIST) {
 
-					// Set trigger to false if the set distance is not positive
-					trig->_trigger_enabled = cmd.param1 > 0.0f;
+					// Set trigger to disabled if the set distance is not positive
+					if (cmd.param1 > 0.0f && !trig->_trigger_enabled) {
+						warnx("Turning camera on!");
+						trig->_camera_interface->powerOn();
+						poll_interval_usec = 2000000;
+					} else if (cmd.param1 <= 0.0f && trig->_trigger_enabled) {
+						warnx("Turning camera off!");
+						trig->_camera_interface->powerOff();
+						poll_interval_usec = 2000000;
+					}					trig->_trigger_enabled = cmd.param1 > 0.0f;
 					trig->_distance = cmd.param1;
+					work_queue(LPWORK, &_work, (worker_t)&CameraTrigger::cycle_trampoline,
+		   					camera_trigger::g_camera_trigger, USEC2TICK(poll_interval_usec));
+					return;
 				}
 			}
 
