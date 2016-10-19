@@ -533,6 +533,17 @@ PARAM_DEFINE_INT32(EKF2_HGT_MODE, 0);
 PARAM_DEFINE_FLOAT(EKF2_RNG_NOISE, 0.1f);
 
 /**
+ * Range dependant noise for the range finder as a fraction of the measured range.
+ *
+ * @group EKF2
+ * @min 0.0
+ * @max 0.2
+ * @unit m/m
+ * @decimal 2
+ */
+PARAM_DEFINE_FLOAT(EKF2_RNG_NSCALE, 0.1f);
+
+/**
  * Gate size for range finder fusion
  *
  * @group EKF2

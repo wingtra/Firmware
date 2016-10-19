@@ -226,6 +226,7 @@ private:
 	control::BlockParamFloat _range_noise;		// observation noise for range finder measurements (m)
 	control::BlockParamFloat _range_innov_gate;	// range finder fusion innovation consistency gate size (STD)
 	control::BlockParamFloat _rng_gnd_clearance;	// minimum valid value for range when on ground (m)
+	control::BlockParamFloat _range_noise_scaler;	// obsevation noise that scales with measured range (m/m)
 
 	// vision estimate fusion
 	control::BlockParamFloat _ev_pos_noise;		// default position observation noise for exernal vision measurements (m)
@@ -341,6 +342,7 @@ Ekf2::Ekf2():
 	_range_noise(this, "EKF2_RNG_NOISE", false, &_params->range_noise),
 	_range_innov_gate(this, "EKF2_RNG_GATE", false, &_params->range_innov_gate),
 	_rng_gnd_clearance(this, "EKF2_MIN_RNG", false, &_params->rng_gnd_clearance),
+	_range_noise_scaler(this, "EKF2_RNG_NSCALE", false, &_params->range_noise_scaler),
 	_ev_pos_noise(this, "EKF2_EVP_NOISE", false, &_default_ev_pos_noise),
 	_ev_ang_noise(this, "EKF2_EVA_NOISE", false, &_default_ev_ang_noise),
 	_ev_innov_gate(this, "EKF2_EV_GATE", false, &_params->ev_innov_gate),
