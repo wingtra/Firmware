@@ -114,7 +114,7 @@ int MavlinkULog::handle_update(mavlink_channel_t channel)
 		} else {
 
 			if (hrt_elapsed_time(&_last_sent_time) > ulog_stream_ack_s::ACK_TIMEOUT * 1000) {
-				if (++_sent_tries > ulog_stream_ack_s::ACK_MAX_TRIES) {
+				if (++_sent_tries > ulog_stream_ack_s::ACK_MAX_TRIES*2) {
 					return -ETIMEDOUT;
 
 				} else {
