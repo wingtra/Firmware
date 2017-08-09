@@ -177,11 +177,11 @@ int LogWriterMavlink::publish_message()
 			}
 		} while (!got_ack && hrt_elapsed_time(&started) / 1000 < timeout_ms);
 
-		// if (!got_ack) {
-		// 	PX4_ERR("Ack timeout. Stopping mavlink log");
-		// 	stop_log();
-		// 	return -2;
-		// }
+		if (!got_ack) {
+			PX4_ERR("Ack timeout. Stopping mavlink log");
+			stop_log();
+			return -2;
+		}
 
 		PX4_DEBUG("got ack in %i ms", (int)(hrt_elapsed_time(&started) / 1000));
 	}
